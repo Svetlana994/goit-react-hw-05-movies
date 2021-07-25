@@ -9,32 +9,31 @@ import MovieItem from "../components/MovieItem/MovieItem";
 function MovieDetailsPage() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
-  console.log(movie);
+  //console.log(movie);
 
   useEffect(() => {
     async function getMovie() {
       const movieById = await moviesAPI.fetchMovieById(movieId);
-      console.log(movieById);
+      //console.log(movieById);
       setMovie(movieById);
     }
     getMovie();
   }, [movieId]);
 
-  const { url } = useRouteMatch();
-  console.log(url);
+  const { url, path } = useRouteMatch();
 
   return (
     <>
       <div>{movie && <MovieItem movie={movie} />}</div>
 
-      {/* <NavLink to={`${url}/cast`}>Cast</NavLink>
-      <NavLink to={`${url}/review`}>Review</NavLink> */}
+      <NavLink to={`${url}/cast`}>Cast</NavLink>
+      <NavLink to={`${url}/review`}>Review</NavLink>
 
       <Switch>
-        <Route path={`${url}/cast`} exact>
+        <Route path={`${path}/cast`} exact>
           <Cast />
         </Route>
-        <Route path={`${url}/review`}>
+        <Route path={`${path}/review`}>
           <Review />
         </Route>
       </Switch>

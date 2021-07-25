@@ -8,14 +8,16 @@ function MoviesPage() {
   console.log(movies);
 
   useEffect(() => {
-    async function getMovies() {
-      const q = await moviesAPI.fetchMoviesByQuery(formValue);
-      // if (q === []) {
-      //   return;
-      // }
-      setMovies(q);
+    if (formValue) {
+      async function getMovies() {
+        const q = await moviesAPI.fetchMoviesByQuery(formValue);
+        // if (q === []) {
+        //   return;
+        // }
+        setMovies(q);
+      }
+      getMovies();
     }
-    getMovies();
   }, [formValue]);
 
   const handleSubmit = (e) => {

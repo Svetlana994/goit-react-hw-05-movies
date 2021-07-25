@@ -31,14 +31,16 @@ export async function fetchMovieById(movieId) {
   return movie;
 }
 
-export function fetchMovieCast(movieId) {
-  return fetchWithErrorHandling(
-    `movie/{movieId}/credits?api_key=${API_KEY}&language=en-US`
+export async function fetchMovieCast(movieId) {
+  const a = await axios.get(
+    `movie/${movieId}/credits?api_key=${API_KEY}&language=en-US`
   );
+  const q = a.data.cast;
+  return q;
 }
 
 export function fetchMovieReview(movieId) {
   return fetchWithErrorHandling(
-    `movie/{movieId}/reviews?api_key=${API_KEY}&language=en-US&page=1`
+    `movie/${movieId}/reviews?api_key=${API_KEY}&language=en-US&page=1`
   );
 }
