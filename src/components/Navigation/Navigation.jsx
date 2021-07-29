@@ -1,16 +1,17 @@
-import { NavLink } from "react-router-dom";
-import s from "./Navigation.module.css";
+import { Link, NavList, NavItem } from "./Navigation.styled";
 
 function Navigation() {
   return (
-    <div>
-      <NavLink to="/" exact className={s.link} activeClassName={s.activeLink}>
-        Home Page
-      </NavLink>
-      <NavLink to="/movies" className={s.link} activeClassName={s.activeLink}>
-        Movies
-      </NavLink>
-    </div>
+    <NavList>
+      <NavItem>
+        <Link to="/" exact>
+          Home Page
+        </Link>
+      </NavItem>
+      <NavItem>
+        <Link to="/movies">Movies</Link>
+      </NavItem>
+    </NavList>
   );
 }
 

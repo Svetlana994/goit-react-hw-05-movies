@@ -1,40 +1,59 @@
 import { useState, useEffect } from "react";
-import { useParams, Route, Switch } from "react-router-dom";
-import { NavLink, useRouteMatch } from "react-router-dom";
+import {
+  useParams,
+  Route,
+  Switch,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import * as moviesAPI from "../services/movies-api";
-import Cast from "./Cast";
-import Review from "./Review";
+import { RiArrowGoBackFill } from "react-icons/ri";
+import Cast from "../components/Cast/Cast";
+import Review from "../components/Review/Review";
 import MovieItem from "../components/MovieItem/MovieItem";
+import MovieDetailBar from "../components/MovieDetailBar/MovieDetailBar";
 
 function MovieDetailsPage() {
-  const { movieId } = useParams();
+  const { slug } = useParams();
+  const movieId = slug.match(/[a-z0-9]+$/)[0];
   const [movie, setMovie] = useState(null);
-  //console.log(movie);
 
   useEffect(() => {
     async function getMovie() {
       const movieById = await moviesAPI.fetchMovieById(movieId);
-      //console.log(movieById);
       setMovie(movieById);
     }
     getMovie();
   }, [movieId]);
 
-  const { url, path } = useRouteMatch();
+  const { path } = useRouteMatch();
+  const history = useHistory();
+  const location = useLocation();
+
+  function goBack() {
+    if (location.search) {
+      history.push(`/movies${location.state.from.search}`);
+      return;
+    }
+    history.push("/");
+  }
 
   return (
     <>
+      <button type="button" onClick={goBack} style={{ marginBottom: 20 }}>
+        <RiArrowGoBackFill size={20} />
+      </button>
       <div>{movie && <MovieItem movie={movie} />}</div>
 
-      <NavLink to={`${url}/cast`}>Cast</NavLink>
-      <NavLink to={`${url}/review`}>Review</NavLink>
+      <MovieDetailBar />
 
       <Switch>
-        <Route path={`${path}/cast`} exact>
-          <Cast />
+        <Route path={`${path}/cast`}>
+          <Cast movieId={movieId} />
         </Route>
         <Route path={`${path}/review`}>
-          <Review />
+          <Review movieId={movieId} />
         </Route>
       </Switch>
     </>

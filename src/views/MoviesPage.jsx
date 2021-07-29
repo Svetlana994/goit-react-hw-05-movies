@@ -1,50 +1,49 @@
 import { useState, useEffect } from "react";
+import { useLocation, useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 import * as moviesAPI from "../services/movies-api";
 import MovieList from "../components/MovieList/MovieList";
+import SearchForm from "../components/SearchForm/SearchForm";
 
 function MoviesPage() {
-  const [formValue, setFormValue] = useState("");
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search).get("query");
+
+  const [formValue, setFormValue] = useState(searchParams);
   const [movies, setMovies] = useState(null);
-  console.log(movies);
+
+  const history = useHistory();
 
   useEffect(() => {
     if (formValue) {
       async function getMovies() {
-        const q = await moviesAPI.fetchMoviesByQuery(formValue);
-        // if (q === []) {
-        //   return;
-        // }
-        setMovies(q);
+        const response = await moviesAPI.fetchMoviesByQuery(formValue);
+
+        if (response.results.length === 0) {
+          toast.error("Enter a valid search query");
+          return;
+        }
+        setMovies(response.results);
       }
       getMovies();
     }
   }, [formValue]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formValue = e.target.elements.input.value;
-    if (formValue.trim() === "") {
-      return;
-    }
+  const handleSubmit = (formValue) => {
     setFormValue(formValue);
+
+    history.push({
+      ...location,
+      search: `query=${formValue}`,
+    });
+    setMovies([]);
   };
 
   return (
     <>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="input"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search movies"
-          />
-          <button type="submit">Search</button>
-        </form>
-      </div>
+      <SearchForm onSubmit={handleSubmit} />
 
-      {movies && <MovieList movies={movies} />}
+      {movies && <MovieList movies={movies} search={formValue} />}
     </>
   );
 }

@@ -1,24 +1,51 @@
-import React from "react";
+import PropTypes from "prop-types";
+import defaultImg from "../../default-images/default-img.png";
+import {
+  Container,
+  Title,
+  TextRating,
+  TextOverview,
+  TitleOverview,
+  TitleGenres,
+} from "./MovieItem.styled";
 
 function MovieItem({
-  movie: { poster_path, title, popularity, overview, genres },
+  movie: { poster_path = defaultImg, title, vote_average, overview, genres },
 }) {
   return (
-    <>
-      <img src={`https://image.tmdb.org/t/p/w500${poster_path}`} alt={title} />
-      <h2>{title}</h2>
-      <h3>Popularity</h3>
-      <p>{popularity}</p>
-      <h3>Overview</h3>
-      <p>{overview}</p>
-      <h3>Genres</h3>
-      <ul>
-        {genres.map((el) => (
-          <li key={el.name}>{el.name}</li>
-        ))}
-      </ul>
-    </>
+    <Container>
+      <img
+        src={`https://image.tmdb.org/t/p/w500${poster_path}`}
+        alt={title}
+        width={340}
+        onError={(e) => (e.target.src = defaultImg)}
+      />
+      <div>
+        <Title>{title}</Title>
+        <TextRating>Rating</TextRating>
+        <span>{Math.floor((vote_average / 10) * 100) + "%"}</span>
+        <TitleOverview>Overview</TitleOverview>
+        <TextOverview>{overview}</TextOverview>
+        <TitleGenres>Genres</TitleGenres>
+        <ul>
+          {genres.map(({ name }) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+      </div>
+    </Container>
   );
 }
+
+MovieItem.propTypes = {
+  movie: PropTypes.shape({
+    poster_path: PropTypes.string,
+    title: PropTypes.string,
+    vote_average: PropTypes.number.isRequired,
+    overview: PropTypes.string.isRequired,
+    genres: PropTypes.array.isRequired,
+    name: PropTypes.string,
+  }),
+};
 
 export default MovieItem;
